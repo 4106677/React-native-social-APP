@@ -59,7 +59,6 @@ export default function HomeScreen() {
                   backgroundColor: focused ? "#FF6C00" : "#ffffff",
                 }}
               >
-                {/* <Image source={require("../assets/images/new.png")} /> */}
                 {focused ? <UnionFocus /> : <Union />}
               </View>
             );
@@ -83,8 +82,6 @@ export default function HomeScreen() {
                   backgroundColor: focused ? "#FF6C00" : "#ffffff",
                 }}
               >
-                {/* <Image source={require("../assets/images/user.png")} />
-                 */}
                 {focused ? <UserFocus /> : <User />}
               </View>
             );
@@ -97,10 +94,10 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  cotainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+// });
