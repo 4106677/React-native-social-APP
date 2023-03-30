@@ -2,12 +2,16 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Out from "../assets/images/log-out.svg";
 
-export default function PostsScreen() {
+export default function PostsScreen({ navigation }) {
+  const logOut = () => {
+    navigation.navigate("Login");
+  };
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.header}>
         <Text style={styles.sectionTitle}>Публікації</Text>
-        <TouchableOpacity style={styles.nav}>
+        <TouchableOpacity style={styles.nav} onPress={logOut}>
           <Out />
         </TouchableOpacity>
       </View>
@@ -15,8 +19,7 @@ export default function PostsScreen() {
         <View style={styles.user}>
           <Image
             source={require("../assets/images/avatar.png")}
-            // height={60}
-            // width={60}
+            style={styles.avatar}
           ></Image>
           <View style={styles.description}>
             <Text
@@ -78,8 +81,13 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 11,
     lineHeight: 13,
-    fontWeight: 400,
+    // fontWeight: 400,
     color: "#212121",
     opacity: 0.8,
+  },
+  avatar: {
+    height: 60,
+    width: 60,
+    resizeMode: "contain",
   },
 });

@@ -1,13 +1,8 @@
 import React from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Svg, SvgUri } from "react-native-svg";
-import Grid from "../assets/images/grid.svg";
-import GridFocus from "../assets/images/gridFocus.svg";
-import Union from "../assets/images/union.svg";
-import UnionFocus from "../assets/images/unionFocus.svg";
-import User from "../assets/images/user.svg";
-import UserFocus from "../assets/images/userFocus.svg";
+
+import { Ionicons, Feather } from "@expo/vector-icons";
 
 import PostsScreen from "./PostsScreen";
 import CreatePostScreen from "./CreatePostsScreen";
@@ -36,7 +31,11 @@ export default function HomeScreen() {
                   backgroundColor: focused ? "#FF6C00" : "#ffffff",
                 }}
               >
-                {focused ? <GridFocus /> : <Grid />}
+                <Ionicons
+                  name="grid-outline"
+                  size={24}
+                  color={focused ? "#fff" : "#212121"}
+                />
               </View>
             );
           },
@@ -59,7 +58,11 @@ export default function HomeScreen() {
                   backgroundColor: focused ? "#FF6C00" : "#ffffff",
                 }}
               >
-                {focused ? <UnionFocus /> : <Union />}
+                <Ionicons
+                  name="add-outline"
+                  size={24}
+                  color={focused ? "#fff" : "#212121"}
+                />
               </View>
             );
           },
@@ -82,7 +85,11 @@ export default function HomeScreen() {
                   backgroundColor: focused ? "#FF6C00" : "#ffffff",
                 }}
               >
-                {focused ? <UserFocus /> : <User />}
+                <Feather
+                  name="user"
+                  size={24}
+                  color={focused ? "#fff" : "#212121"}
+                />
               </View>
             );
           },

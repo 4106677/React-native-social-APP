@@ -8,40 +8,37 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Button,
   Text,
   TouchableOpacity,
   ImageBackground,
   onChangeText,
 } from "react-native";
 
-export default function LoginScreen({ navigation }) {
-  const [email, setemail] = useState("");
+export default function RegistrationScreen() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [login, setLogin] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [focus, setFocus] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
 
-  const emailHandler = (text) => setemail(text);
+  const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
+  const loginHandler = (text) => setLogin(text);
 
   const onLogin = () => {
-    // Alert.alert("Credentials", `${email} + ${password}`);
+    Alert.alert(`${login}`, `${email} + ${password}`);
     Keyboard.dismiss();
     setIsShowKeyboard(false);
-    navigation.navigate("Home");
-    setemail("");
+    setEmail("");
     setPassword("");
-    console.log(email, password);
+    setLogin("");
+    console.log(email, password, login);
   };
 
   const toggleHidePassword = () => {
     setHidePassword(!hidePassword);
   };
-
-  // const [inputBacklight, setInputBacklight] = useState({
-  //   borderColor: "#E8E8E8",
-  // });
 
   const onFocus = () => {
     setIsShowKeyboard(true);
@@ -62,7 +59,7 @@ export default function LoginScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.wrapper}>
         <ImageBackground
-          source={require("../../assets/images/photoBG.jpg")}
+          source={require("../assets/images/photoBG.jpg")}
           resizeMode="cover"
           style={styles.image}
         >
@@ -74,16 +71,24 @@ export default function LoginScreen({ navigation }) {
                 // style={styles.form}
                 style={{
                   ...styles.form,
-                  marginBottom: isShowKeyboard ? 93 : 43,
+                  marginBottom: isShowKeyboard ? 159 : 43,
                 }}
               >
-                <Text style={styles.text}>Увійти</Text>
+                <Text style={styles.text}>Реєстрація</Text>
+                <TextInput
+                  value={login}
+                  onChangeText={loginHandler}
+                  placeholder="Логін"
+                  style={styles.input}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                  autoCapitalize="none"
+                  autoComplete="email"
+                />
                 <TextInput
                   value={email}
                   onChangeText={emailHandler}
                   placeholder="Адреса електронної пошти"
-                  // style={{ ...styles.input, ...inputBacklight }}
-                  // style={focus ? styles.inputOnFocus : styles.inputOnBlur}
                   style={styles.input}
                   onFocus={onFocus}
                   onBlur={onBlur}
@@ -96,7 +101,6 @@ export default function LoginScreen({ navigation }) {
                     onChangeText={passwordHandler}
                     placeholder="Пароль"
                     secureTextEntry={hidePassword}
-                    // style={focus ? styles.inputOnFocus : styles.inputOnBlur}
                     style={styles.input}
                     onFocus={onFocus}
                     onBlur={onBlur}
@@ -118,14 +122,9 @@ export default function LoginScreen({ navigation }) {
                 onPress={onLogin}
                 activeOpacity={0.8}
               >
-                <Text style={styles.btnText}>Увійти</Text>
+                <Text style={styles.btnText}>Зареєструватись</Text>
               </TouchableOpacity>
-              <Text
-                style={styles.upperText}
-                onPress={() => navigation.navigate("Registration")}
-              >
-                Немає аккаунта? Зареєструватись.
-              </Text>
+              <Text style={styles.upperText}>Вже є аккаунт? Увійти</Text>
             </KeyboardAvoidingView>
           </View>
         </ImageBackground>
@@ -157,19 +156,20 @@ const styles = StyleSheet.create({
     // fontWeight: 500,
     fontSize: 30,
     lineHeight: 35,
-    margin: 32,
+    marginTop: 32,
+    marginBottom: 15,
   },
 
   show: {
     position: "absolute",
     right: 15,
-    bottom: 30,
+    top: 30,
   },
   input: {
     height: 50,
     padding: 10,
     borderWidth: 1,
-    marginBottom: 16,
+    marginTop: 16,
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
     borderColor: "#E8E8E8",
@@ -201,6 +201,6 @@ const styles = StyleSheet.create({
     // fontWeight: 400,
     fontSize: 16,
     lineHeight: 19,
-    marginBottom: 144,
+    marginBottom: 66,
   },
 });

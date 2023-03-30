@@ -15,7 +15,7 @@ import {
   onChangeText,
 } from "react-native";
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -26,10 +26,9 @@ export default function LoginScreen({ navigation }) {
   const passwordHandler = (text) => setPassword(text);
 
   const onLogin = () => {
-    // Alert.alert("Credentials", `${email} + ${password}`);
+    Alert.alert("Credentials", `${email} + ${password}`);
     Keyboard.dismiss();
     setIsShowKeyboard(false);
-    navigation.navigate("Home");
     setemail("");
     setPassword("");
     console.log(email, password);
@@ -62,7 +61,7 @@ export default function LoginScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.wrapper}>
         <ImageBackground
-          source={require("../../assets/images/photoBG.jpg")}
+          source={require("../assets/images/photoBG.jpg")}
           resizeMode="cover"
           style={styles.image}
         >
@@ -120,10 +119,7 @@ export default function LoginScreen({ navigation }) {
               >
                 <Text style={styles.btnText}>Увійти</Text>
               </TouchableOpacity>
-              <Text
-                style={styles.upperText}
-                onPress={() => navigation.navigate("Registration")}
-              >
+              <Text style={styles.upperText}>
                 Немає аккаунта? Зареєструватись.
               </Text>
             </KeyboardAvoidingView>
