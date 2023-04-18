@@ -28,6 +28,14 @@
     "packagerOpts": {
       "config": "metro.config.js"
     },
-    "jsEngine": "hermes"
+    "jsEngine": "hermes",
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ]
+    ]
   }
 }

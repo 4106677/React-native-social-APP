@@ -8,18 +8,35 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   TextInput,
+  Alert,
 } from "react-native";
 import Left from "../assets/images/arrow-left.svg";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 
 import DropPhoto from "../assets/images/dropPhoto.svg";
 import MapPin from "../assets/images/mapPin.svg";
 import Trash from "../assets/images/trash.svg";
+import Cam from "../components/Camera";
 
 export default function CreatePostsScreen() {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
+
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
   const nameHandler = (text) => setName(text);
   const locationHandler = (text) => setLocation(text);
@@ -39,8 +56,26 @@ export default function CreatePostsScreen() {
           <Text style={styles.sectionTitle}>Створити публікацію</Text>
         </View>
         <View style={styles.container}>
-          <View style={styles.dropzone}>
-            <DropPhoto style={styles.dropPhoto} />
+          <View onPress={console.log("object")} style={styles.dropzone}>
+            {hasPermission ? (
+              <Camera style={styles.camera}>
+                <TouchableOpacity style={styles.dropCamera} onPress={() => {}}>
+                  <DropPhoto />
+                </TouchableOpacity>
+              </Camera>
+            ) : (
+              <TouchableOpacity
+                style={styles.dropPhoto}
+                onPress={() => {
+                  Alert.alert(`Надайте права доступу для додатку "Камера"`);
+                }}
+              >
+                <DropPhoto />
+              </TouchableOpacity>
+            )}
+            {/* <DropPhoto style={styles.dropPhoto} /> */}
+
+            {/* <Cam /> */}
           </View>
           <Text style={styles.uploadText}>Завантажте фото</Text>
           <View>
@@ -145,11 +180,23 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderWidth: 1,
   },
+  camera: {
+    height: "100%",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
   dropPhoto: {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: [{ translateX: -30 }, { translateY: -30 }],
+  },
+  dropCamera: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateX: -30 }, { translateY: -30 }],
+    opacity: 0.85,
   },
   input: {
     height: 50,
