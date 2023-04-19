@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import Out from "../assets/images/log-out.svg";
 
-export default function PostsScreen({ navigation }) {
+import Out from "../assets/images/log-out.svg";
+import Shape from "../assets/images/shape.svg";
+import MapPin from "../assets/images/mapPin.svg";
+
+import { FlatList } from "react-native-gesture-handler";
+import { color } from "react-native-reanimated";
+
+export default function PostsScreen({ navigation, route }) {
+  const [posts, setPosts] = useState([]);
+
   const logOut = () => {
     navigation.navigate("Login");
   };
+
+  useEffect(() => {
+    if (route.params) {
+      setPosts((prevState) => [...prevState, route.params]);
+    }
+  }, [route.params]);
+
+  console.log(posts);
 
   return (
     <View style={styles.wrapper}>
@@ -15,7 +31,7 @@ export default function PostsScreen({ navigation }) {
           <Out />
         </TouchableOpacity>
       </View>
-      <View style={styles.users}>
+      <View style={styles.usersPosts}>
         <View style={styles.user}>
           <Image
             source={require("../assets/images/avatar.png")}
@@ -34,6 +50,28 @@ export default function PostsScreen({ navigation }) {
             </Text>
             <Text style={styles.text}>email@example.com</Text>
           </View>
+        </View>
+        <View style={styles.postsContainer}>
+          <FlatList
+            data={posts}
+            keyExtractor={(item, index) => {
+              index.toString();
+            }}
+            renderItem={({ item }) => (
+              <View style={styles.postItem}>
+                <Image source={{ uri: item.photo }} style={styles.postImage} />
+                <Text style={styles.itemName}>{item.name}</Text>
+                <View style={styles.itemDetails}>
+                  <Shape />
+                  <Text style={{ color: "#BDBDBD", marginLeft: 9 }}>0</Text>
+                  <MapPin style={{ marginLeft: "auto", marginRight: 4 }} />
+                  <Text style={{ textDecorationLine: "underline" }}>
+                    {item.location}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
         </View>
       </View>
     </View>
@@ -64,13 +102,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
   },
-  users: {
+  usersPosts: {
     marginHorizontal: 16,
     margin: 32,
     // flex: 1,
+    // flexDirection: "column",
   },
   user: {
-    position: "absolute",
+    // position: "absolute",
     flexDirection: "row",
   },
   description: {
@@ -89,5 +128,28 @@ const styles = StyleSheet.create({
     height: 60,
     width: 60,
     resizeMode: "contain",
+  },
+  postsContainer: {
+    height: "100%",
+  },
+  postImage: {
+    width: "100%",
+    height: 240,
+    paddingTop: 10,
+    overflow: "hidden",
+    borderRadius: 8,
+    marginTop: 32,
+  },
+  postItem: {
+    fontSize: 16,
+    lineHeight: 19,
+  },
+  itemName: {
+    marginTop: 8,
+  },
+  itemDetails: {
+    marginTop: 11,
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

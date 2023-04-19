@@ -19,9 +19,8 @@ import * as MediaLibrary from "expo-media-library";
 import DropPhoto from "../assets/images/dropPhoto.svg";
 import MapPin from "../assets/images/mapPin.svg";
 import Trash from "../assets/images/trash.svg";
-import Cam from "../components/Camera";
 
-export default function CreatePostsScreen() {
+export default function CreatePostsScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -57,6 +56,12 @@ export default function CreatePostsScreen() {
     setPhoto("");
   };
 
+  const sendPost = () => {
+    console.log(navigation);
+    navigation.navigate("Posts", { photo, name, location });
+    setPhoto(""), setName(""), setLocation("");
+  };
+
   function photoContainer() {
     if (photo === "") {
       return (
@@ -69,9 +74,6 @@ export default function CreatePostsScreen() {
     } else {
       return (
         <ImageBackground source={{ uri: photo }} style={styles.takePhoto}>
-          {/* <TouchableOpacity style={styles.dropCamera} onPress={setPhoto("")}> */}
-          {/* <DropPhoto onPress={setPhoto("")} /> */}
-          {/* </TouchableOpacity> */}
           <TouchableOpacity style={styles.dropCamera} onPress={resetPhoto}>
             <DropPhoto />
           </TouchableOpacity>
@@ -136,7 +138,7 @@ export default function CreatePostsScreen() {
               </View>
               <TouchableOpacity
                 style={name.length < 1 ? styles.buttonOff : styles.button}
-                // onPress={onLogin}
+                onPress={sendPost}
                 activeOpacity={0.8}
               >
                 <Text
