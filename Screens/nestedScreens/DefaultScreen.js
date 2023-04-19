@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
-import Out from "../assets/images/log-out.svg";
-import Shape from "../assets/images/shape.svg";
-import MapPin from "../assets/images/mapPin.svg";
+import Out from "../../assets/images/log-out.svg";
+import Shape from "../../assets/images/shape.svg";
+import MapPin from "../../assets/images/mapPin.svg";
 
 import { FlatList } from "react-native-gesture-handler";
 import { color } from "react-native-reanimated";
 
-export default function PostsScreen({ navigation, route }) {
+export default function DefaultScreenPosts({ navigation, route }) {
   const [posts, setPosts] = useState([]);
 
   const logOut = () => {
@@ -21,7 +21,7 @@ export default function PostsScreen({ navigation, route }) {
     }
   }, [route.params]);
 
-  console.log(posts);
+  // console.log(posts);
 
   return (
     <View style={styles.wrapper}>
@@ -34,7 +34,7 @@ export default function PostsScreen({ navigation, route }) {
       <View style={styles.usersPosts}>
         <View style={styles.user}>
           <Image
-            source={require("../assets/images/avatar.png")}
+            source={require("../../assets/images/avatar.png")}
             style={styles.avatar}
           ></Image>
           <View style={styles.description}>
@@ -55,7 +55,7 @@ export default function PostsScreen({ navigation, route }) {
           <FlatList
             data={posts}
             keyExtractor={(item, index) => {
-              index.toString();
+              return item.photo;
             }}
             renderItem={({ item }) => (
               <View style={styles.postItem}>
@@ -63,9 +63,17 @@ export default function PostsScreen({ navigation, route }) {
                 <Text style={styles.itemName}>{item.name}</Text>
                 <View style={styles.itemDetails}>
                   <Shape />
-                  <Text style={{ color: "#BDBDBD", marginLeft: 9 }}>0</Text>
+                  <Text
+                    style={{ color: "#BDBDBD", marginLeft: 9 }}
+                    onPress={() => navigation.navigate("CommentsScreen")}
+                  >
+                    0
+                  </Text>
                   <MapPin style={{ marginLeft: "auto", marginRight: 4 }} />
-                  <Text style={{ textDecorationLine: "underline" }}>
+                  <Text
+                    style={{ textDecorationLine: "underline" }}
+                    onPress={() => navigation.navigate("MapScreen", { item })}
+                  >
                     {item.location}
                   </Text>
                 </View>

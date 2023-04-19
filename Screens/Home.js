@@ -4,9 +4,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { Ionicons, Feather } from "@expo/vector-icons";
 
-import PostsScreen from "./PostsScreen";
-import CreatePostScreen from "./CreatePostsScreen";
-import ProfileScreen from "./ProfileScreen";
+// import DefaultScreen from "./nestedScreens/DefaultScreen";
+import CreatePostScreen from "./mainScreen/CreatePostsScreen";
+import ProfileScreen from "./mainScreen/ProfileScreen";
+import PostsScreen from "./mainScreen/PostsScreen";
 
 const MainTab = createBottomTabNavigator();
 

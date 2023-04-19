@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import RegistrationScreen from "./auth/RegistrationScreen";
 import LoginScreen from "./auth/LoginScreen";
 import Home from "./Home";
+// import MapScreen from "./MapScreen";
 
 const MainStack = createStackNavigator();
 
@@ -31,6 +32,13 @@ export default function useRoute(isAuth) {
             headerShown: false,
           }}
         />
+        {/* <MainStack.Screen
+          name="Map"
+          component={MapScreen}
+          options={{
+            headerShown: false,
+          }}
+        /> */}
       </MainStack.Navigator>
     );
   }

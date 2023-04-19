@@ -15,8 +15,8 @@ import {
   onChangeText,
   Image,
 } from "react-native";
-import Add from "../assets/images/add.svg";
-import Out from "../assets/images/log-out.svg";
+import Add from "../../assets/images/add.svg";
+import Out from "../../assets/images/log-out.svg";
 
 export default function ProfileScreen({ navigation }) {
   const logOut = () => {
@@ -26,7 +26,7 @@ export default function ProfileScreen({ navigation }) {
   return (
     <View style={styles.wrapper}>
       <ImageBackground
-        source={require("../assets/images/photoBG.jpg")}
+        source={require("../../assets/images/photoBG.jpg")}
         resizeMode="cover"
         style={styles.image}
       >
@@ -34,7 +34,7 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.form}>
             <View style={styles.user}>
               <Image
-                source={require("../assets/images/avatar.png")}
+                source={require("../../assets/images/avatar.png")}
                 style={styles.avatar}
               ></Image>
               <Add style={styles.add} />

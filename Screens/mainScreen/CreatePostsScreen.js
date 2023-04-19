@@ -11,30 +11,30 @@ import {
   Alert,
   ImageBackground,
 } from "react-native";
-import Left from "../assets/images/arrow-left.svg";
+import Left from "../../assets/images/arrow-left.svg";
 import React, { useState, useEffect, useRef } from "react";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 
-import DropPhoto from "../assets/images/dropPhoto.svg";
-import MapPin from "../assets/images/mapPin.svg";
-import Trash from "../assets/images/trash.svg";
+import DropPhoto from "../../assets/images/dropPhoto.svg";
+import MapPin from "../../assets/images/mapPin.svg";
+import Trash from "../../assets/images/trash.svg";
 
 export default function CreatePostsScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
+  const [coordinates, setCoordinates] = useState("");
 
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photo, setPhoto] = useState("");
-  const [type, setType] = useState(Camera.Constants.Type.back);
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       await MediaLibrary.requestPermissionsAsync();
-
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -48,7 +48,12 @@ export default function CreatePostsScreen({ navigation }) {
   };
 
   const takePhoto = async () => {
+    let locationPermis = await Location.requestForegroundPermissionsAsync();
+    let location = await Location.getCurrentPositionAsync({});
     const photo = await cameraRef.takePictureAsync();
+    const loc = await Location.getCurrentPositionAsync();
+    console.log(loc);
+    setCoordinates(loc);
     setPhoto(photo.uri);
   };
 
@@ -57,8 +62,12 @@ export default function CreatePostsScreen({ navigation }) {
   };
 
   const sendPost = () => {
-    console.log(navigation);
-    navigation.navigate("Posts", { photo, name, location });
+    navigation.navigate("DefaultScreen", {
+      photo,
+      name,
+      location,
+      coordinates,
+    });
     setPhoto(""), setName(""), setLocation("");
   };
 

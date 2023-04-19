@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import useRoute from "./Screens/router";
+import { StatusBar } from "expo-status-bar";
 
 const MainStack = createStackNavigator();
 
@@ -12,6 +13,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <NavigationContainer>{routing}</NavigationContainer>
+      <StatusBar barStyle="light-content" />
     </View>
   );
 }
