@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   TextInput,
   Alert,
+  ImageBackground,
 } from "react-native";
 import Left from "../assets/images/arrow-left.svg";
 import React, { useState, useEffect, useRef } from "react";
@@ -27,6 +28,7 @@ export default function CreatePostsScreen() {
 
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
+  const [photo, setPhoto] = useState("");
   const [type, setType] = useState(Camera.Constants.Type.back);
 
   useEffect(() => {
@@ -46,6 +48,38 @@ export default function CreatePostsScreen() {
     setIsShowKeyboard(false);
   };
 
+  const takePhoto = async () => {
+    const photo = await cameraRef.takePictureAsync();
+    setPhoto(photo.uri);
+  };
+
+  const resetPhoto = () => {
+    setPhoto("");
+  };
+
+  function photoContainer() {
+    if (photo === "") {
+      return (
+        <Camera style={styles.camera} ref={setCameraRef}>
+          <TouchableOpacity style={styles.dropCamera} onPress={takePhoto}>
+            <DropPhoto />
+          </TouchableOpacity>
+        </Camera>
+      );
+    } else {
+      return (
+        <ImageBackground source={{ uri: photo }} style={styles.takePhoto}>
+          {/* <TouchableOpacity style={styles.dropCamera} onPress={setPhoto("")}> */}
+          {/* <DropPhoto onPress={setPhoto("")} /> */}
+          {/* </TouchableOpacity> */}
+          <TouchableOpacity style={styles.dropCamera} onPress={resetPhoto}>
+            <DropPhoto />
+          </TouchableOpacity>
+        </ImageBackground>
+      );
+    }
+  }
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.wrapper}>
@@ -56,13 +90,9 @@ export default function CreatePostsScreen() {
           <Text style={styles.sectionTitle}>Створити публікацію</Text>
         </View>
         <View style={styles.container}>
-          <View onPress={console.log("object")} style={styles.dropzone}>
+          <View style={styles.dropzone}>
             {hasPermission ? (
-              <Camera style={styles.camera}>
-                <TouchableOpacity style={styles.dropCamera} onPress={() => {}}>
-                  <DropPhoto />
-                </TouchableOpacity>
-              </Camera>
+              photoContainer()
             ) : (
               <TouchableOpacity
                 style={styles.dropPhoto}
@@ -197,6 +227,14 @@ const styles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -30 }, { translateY: -30 }],
     opacity: 0.85,
+  },
+  takePhoto: {
+    height: 238,
+    width: "100%",
+    borderRadius: 8,
+    overflow: "hidden",
+    // position: "absolute",
+    resizeMode: "cover",
   },
   input: {
     height: 50,
