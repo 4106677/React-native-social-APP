@@ -1,114 +1,78 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import fireApp from "../../firebase/config";
+import db from "../../firebase/config";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
   updateProfile,
+  onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
-// import uuid from "react-native-uuid";
-import { Alert } from "react-native";
 
-export const authSignInUser = createAsyncThunk(
-  "auth/authSignInUser",
-  async (credentials, { rejectWithValue }) => {
-    console.log(credentials);
-    const auth = getAuth();
+import { authSlice } from "./authReducer";
+
+const { authSignOut, authStateChange, updateUserProfile } = authSlice.actions;
+
+const auth = getAuth(db);
+
+export const authSignUpUser =
+  ({ email, password, userName }) =>
+  async (dispatch, getState) => {
     try {
-      const { user } = await signInWithEmailAndPassword(
-        auth,
-        credentials.email,
-        credentials.password
-      );
+      await createUserWithEmailAndPassword(auth, email, password);
 
-      return {
-        name: user.displayName,
-        email: user.email,
-        id: user.uid,
-        token: user.accessToken,
-        // avatar: user.photoURL,
-      };
-    } catch (error) {
-      Alert.alert(error.message);
-      return rejectWithValue(error.message);
-    }
-  }
-);
+      const user = await auth.currentUser;
 
-export const authSignUpUser = createAsyncThunk(
-  "auth/authSignUpUser",
-  async (credentials, { rejectWithValue }) => {
-    const auth = getAuth();
-    try {
-      await createUserWithEmailAndPassword(
-        auth,
-
-        credentials.email,
-        credentials.password
-      );
-      Alert.alert("You have successfully created an account!");
-      await updateProfile(auth.currentUser, {
-        displayName: credentials.login,
-        // photoURL: credentials.avatar,
+      await updateProfile(user, {
+        displayName: userName,
       });
-      const { displayName, email, uid, accessToken, photoURL } =
-        auth.currentUser;
-      console.log(displayName, email, uid);
-      return {
-        name: displayName,
-        email: email,
-        id: uid,
-        token: accessToken,
-        avatar: photoURL,
-      };
-    } catch (error) {
-      //   if (`${error}`.includes("auth/email-already-in-use")) {
-      //     Alert.alert("Oops, something went wrong, please try again");
-      //   }
-      Alert.alert(error.message);
-      //   console.log(error);
-      return rejectWithValue(error.message);
-    }
-  }
-);
 
-export const authSignOutUser = createAsyncThunk(
-  "auth/authSignOutUser",
-  async (_, { rejectWithValue }) => {
+      const { displayName, uid } = await auth.currentUser;
+
+      dispatch(
+        authSlice.actions.updateUserProfile({
+          userId: uid,
+          userName: userName,
+        })
+      );
+    } catch (error) {
+      console.log("error.message", error.message);
+    }
+  };
+
+export const authSignInUser =
+  ({ email, password }) =>
+  async (dispatch, getState) => {
     try {
-      const auth = getAuth();
-      await signOut(auth);
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      // console.log("user SignInUser", user);
     } catch (error) {
-      return rejectWithValue(error.message);
+      console.log("error", error);
+      console.log("error.message", error.message);
     }
+  };
+
+export const authStateChangeUser = () => async (dispatch, getState) => {
+  try {
+    await onAuthStateChanged(auth, (user) => {
+      // console.log(user);
+      if (user) {
+        const userUpdateProfile = {
+          userName: user.displayName,
+          userId: user.uid,
+          userEmail: user.email,
+        };
+
+        dispatch(authStateChange({ stateChange: true }));
+        dispatch(updateUserProfile(userUpdateProfile));
+      }
+    });
+  } catch (error) {
+    throw error;
   }
-);
+};
 
-export const setAvatar = createAsyncThunk(
-  "auth/setAvatar",
-  async (uri, { rejectWithValue }) => {
-    const auth = getAuth();
-    try {
-      const avatar = await uploadPhotoToStorage(uri);
-      await updateProfile(auth.currentUser, { photoURL: avatar });
-      const updateUser = auth.currentUser;
-      return {
-        name: updateUser.displayName,
-        email: updateUser.email,
-        id: updateUser.uuid,
-        token: updateUser.accessToken,
-        avatar: updateUser.photoURL,
-      };
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-// export const updateUserProfile = createAsyncThunk(
-//   "auth/updateUserProfile",
-//     async(credentials, { rejectWithValue }) = {
-
-//   }
-// );
+export const authSignOutUser = () => async (dispatch, getState) => {
+  await signOut(auth);
+  dispatch(authSignOut());
+};

@@ -20,7 +20,7 @@ import { useDispatch } from "react-redux";
 export default function RegistrationScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [login, setLogin] = useState("");
+  const [userName, setLogin] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [focus, setFocus] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
@@ -34,7 +34,7 @@ export default function RegistrationScreen({ navigation }) {
   const onSubmit = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
-    dispatch(authSignUpUser({ email, login, password }));
+    dispatch(authSignUpUser({ email, userName, password }));
     setEmail("");
     setPassword("");
     setLogin("");
@@ -80,7 +80,7 @@ export default function RegistrationScreen({ navigation }) {
               >
                 <Text style={styles.text}>Реєстрація</Text>
                 <TextInput
-                  value={login}
+                  value={userName}
                   onChangeText={loginHandler}
                   placeholder="Логін"
                   style={styles.input}

@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import "firebase/auth";
-import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
-import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAMi1T8MjIISESSAWLB3cq3cKqhNTSFHMg",
@@ -13,19 +12,6 @@ const firebaseConfig = {
   measurementId: "G-6KWF82P3E3",
 };
 
-// const firebaseConfig = {
-//   apiKey: "API_KEY",
-//   authDomain: "DOMAIN",
-//   databaseURL: "URL",
-//   projectId: "PROJECT_ID",
-//   storageBucket: "STORAGE",
-//   messagingSenderId: "SENDER_ID",
-//   appId: "APP_ID",
 // };
 export const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-export const storage = getStorage(app);
 export const db = getFirestore(app);
-// export const auth = initializeAuth(app, {
-//   persistence: getReactNativePersistence(AsyncStorage),
-// });

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 import Out from "../../assets/images/log-out.svg";
 import Shape from "../../assets/images/shape.svg";
+import ShapeRed from "../../assets/images/shape-red.svg";
 import MapPin from "../../assets/images/mapPin.svg";
 
 import { FlatList } from "react-native-gesture-handler";
@@ -10,23 +11,75 @@ import { color } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 
+import { useSelector } from "react-redux";
+import app from "../../firebase/config";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  query,
+} from "firebase/firestore";
+
+const db = getFirestore(app);
+
 export default function DefaultScreenPosts({ navigation, route }) {
   const [posts, setPosts] = useState([]);
+  const [commentsCount, setCommentsCount] = useState({});
+  console.log(commentsCount);
+  console.log(posts);
 
   const dispatch = useDispatch();
 
   const logOut = () => {
     dispatch(authSignOutUser());
-    // navigation.navigate("Login");
+  };
+
+  const { userName, userEmail } = useSelector((state) => state.auth);
+
+  const getAllPost = async () => {
+    try {
+      await onSnapshot(collection(db, "posts"), (snapshots) => {
+        setPosts(snapshots.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      });
+    } catch (error) {
+      console.log(error.massage);
+      Alert.alert("Try again");
+    }
   };
 
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+    getAllPost();
+    posts.forEach((post) => {
+      getCommentsCount(post.id);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.commentsCount) {
+      setCommentsCount((prev) => ({
+        ...prev,
+        [route.params.postId]: route.params.commentsCount,
+      }));
     }
   }, [route.params]);
 
-  // console.log(posts);
+  const getCommentsCount = async (postId) => {
+    try {
+      const commentsRef = collection(db, `posts/${postId}/comments`);
+      const queryRef = query(commentsRef);
+      const unsubscribe = onSnapshot(queryRef, (querySnapshot) => {
+        const commentsCount = querySnapshot.docs.length;
+        setCommentsCount((prev) => ({ ...prev, [postId]: commentsCount }));
+      });
+      return () => unsubscribe();
+    } catch (error) {
+      console.log(error);
+      setCommentsCount((prev) => ({ ...prev, [postId]: 0 }));
+    }
+  };
+
+  console.log(posts);
 
   return (
     <View style={styles.wrapper}>
@@ -51,32 +104,35 @@ export default function DefaultScreenPosts({ navigation, route }) {
                 color: "#212121",
               }}
             >
-              Natali Romanova
+              {userName}
             </Text>
-            <Text style={styles.text}>email@example.com</Text>
+            <Text style={styles.text}>{userEmail}</Text>
           </View>
         </View>
         <View style={styles.postsContainer}>
           <FlatList
             data={posts}
-            keyExtractor={(item, index) => {
-              return item.photo;
-            }}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={styles.postItem}>
                 <Image source={{ uri: item.photo }} style={styles.postImage} />
-                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemName}>{item.comment}</Text>
                 <View style={styles.itemDetails}>
-                  <Shape />
+                  {commentsCount[item.id] >= 1 ? <ShapeRed /> : <Shape />}
                   <Text
                     style={{ color: "#BDBDBD", marginLeft: 9 }}
-                    onPress={() => navigation.navigate("CommentsScreen")}
+                    onPress={() =>
+                      navigation.navigate("CommentsScreen", {
+                        postId: item.id,
+                        photo: item.photo,
+                      })
+                    }
                   >
-                    0
+                    {commentsCount[item.id] || 0}
                   </Text>
                   <MapPin style={{ marginLeft: "auto", marginRight: 4 }} />
                   <Text
-                    style={{ textDecorationLine: "underline" }}
+                    style={styles.locationName}
                     onPress={() => navigation.navigate("MapScreen", { item })}
                   >
                     {item.location}
@@ -120,10 +176,12 @@ const styles = StyleSheet.create({
     margin: 32,
     // flex: 1,
     // flexDirection: "column",
+    // paddingBottom: 40,
   },
   user: {
     // position: "absolute",
     flexDirection: "row",
+    paddingBottom: 32,
   },
   description: {
     // flex: 1,
@@ -143,7 +201,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   postsContainer: {
-    height: "100%",
+    // height: "100%",
+    marginBottom: 175,
   },
   postImage: {
     width: "100%",
@@ -151,11 +210,11 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     overflow: "hidden",
     borderRadius: 8,
-    marginTop: 32,
   },
   postItem: {
     fontSize: 16,
     lineHeight: 19,
+    marginBottom: 32,
   },
   itemName: {
     marginTop: 8,
@@ -164,5 +223,14 @@ const styles = StyleSheet.create({
     marginTop: 11,
     flexDirection: "row",
     alignItems: "center",
+  },
+  locationName: {
+    // marginLeft: 4,
+    fontFamily: "RobotoRegular",
+    fontStyle: "normal",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#212121",
+    textDecorationLine: "underline",
   },
 });

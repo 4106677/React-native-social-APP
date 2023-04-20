@@ -13,9 +13,19 @@ import {
 } from "react-native";
 import Left from "../../assets/images/arrow-left.svg";
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
+
+import db from "../../firebase/config";
+import app from "../../firebase/config";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+const storage = getStorage(db);
+
+const cloudDB = getFirestore(app);
 
 import DropPhoto from "../../assets/images/dropPhoto.svg";
 import MapPin from "../../assets/images/mapPin.svg";
@@ -26,10 +36,13 @@ export default function CreatePostsScreen({ navigation }) {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [coordinates, setCoordinates] = useState("");
+  const [comment, setComment] = useState("");
 
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photo, setPhoto] = useState("");
+
+  const { userId, userName } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async () => {
@@ -39,7 +52,7 @@ export default function CreatePostsScreen({ navigation }) {
     })();
   }, []);
 
-  const nameHandler = (text) => setName(text);
+  const nameHandler = (text) => setComment(text);
   const locationHandler = (text) => setLocation(text);
 
   const keyboardHide = () => {
@@ -52,7 +65,7 @@ export default function CreatePostsScreen({ navigation }) {
     let location = await Location.getCurrentPositionAsync({});
     const photo = await cameraRef.takePictureAsync();
     const loc = await Location.getCurrentPositionAsync();
-    console.log(loc);
+
     setCoordinates(loc);
     setPhoto(photo.uri);
   };
@@ -67,8 +80,51 @@ export default function CreatePostsScreen({ navigation }) {
       name,
       location,
       coordinates,
+      comment,
     });
-    setPhoto(""), setName(""), setLocation("");
+    setPhoto(""), setComment(""), setLocation("");
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+
+    const file = await response.blob();
+
+    const uniquePostId = Date.now().toString();
+    const storageRef = ref(storage, `postImage/${uniquePostId}`);
+
+    const data = await uploadBytes(storageRef, file);
+
+    const getStorageRef = await getDownloadURL(storageRef);
+    // console.log(getStorageRef);
+
+    return getStorageRef;
+  };
+
+  const uploadPostToServer = async () => {
+    try {
+      const photo = await uploadPhotoToServer();
+      await addDoc(collection(cloudDB, "posts"), {
+        photo,
+        comment,
+        coordinates,
+        location,
+        userId,
+        userName,
+      });
+    } catch (error) {
+      console.log(error.massage);
+    }
+  };
+
+  const sendPhoto = () => {
+    if (!photo) {
+      Alert.alert("Без фото не можна!>");
+      return;
+    }
+    uploadPostToServer();
+    removeFields();
+    navigation.navigate("Posts");
   };
 
   function photoContainer() {
@@ -90,6 +146,10 @@ export default function CreatePostsScreen({ navigation }) {
       );
     }
   }
+
+  const removeFields = () => {
+    setPhoto(""), setComment(""), setLocation("");
+  };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -130,7 +190,7 @@ export default function CreatePostsScreen({ navigation }) {
                 }}
               >
                 <TextInput
-                  value={name}
+                  value={comment}
                   onChangeText={nameHandler}
                   placeholder="Назва..."
                   style={styles.input}
@@ -147,7 +207,7 @@ export default function CreatePostsScreen({ navigation }) {
               </View>
               <TouchableOpacity
                 style={name.length < 1 ? styles.buttonOff : styles.button}
-                onPress={sendPost}
+                onPress={sendPhoto}
                 activeOpacity={0.8}
               >
                 <Text

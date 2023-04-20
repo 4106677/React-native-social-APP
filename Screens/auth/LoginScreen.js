@@ -15,10 +15,7 @@ import {
   onChangeText,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import {
-  authSignInUser,
-  authSignUpUser,
-} from "../../redux/auth/authOperations";
+import { authSignInUser } from "../../redux/auth/authOperations";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
