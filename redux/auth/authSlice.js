@@ -23,35 +23,33 @@ const authSlice = createSlice({
       .addCase(authSignUpUser.pending, (state) => {
         state.error = null;
       })
-      .addCase(authSignUpUser.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.name = action.payload.name;
-        state.email = action.payload.email;
-        state.token = action.payload.token;
-        state.id = action.payload.id;
+      .addCase(authSignUpUser.fulfilled, (state, { payload }) => {
+        // console.log(payload);
+        state.name = payload.name;
+        state.email = payload.email;
+        state.token = payload.token;
+        state.id = payload.id;
         state.error = null;
         state.isAuth = true;
       })
-      .addCase(authSignUpUser.rejected, (state, action) => {
-        state.error = action.payload;
-      });
-    builder
+      .addCase(authSignUpUser.rejected, (state, { payload }) => {
+        state.error = payload;
+      })
       .addCase(authSignInUser.pending, (state) => {
         state.error = null;
       })
-      .addCase(authSignInUser.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.name = action.payload.name;
-        state.email = action.payload.email;
-        state.token = action.payload.token;
-        state.id = action.payload.id;
+      .addCase(authSignInUser.fulfilled, (state, { payload }) => {
+        console.log(payload);
+        state.name = payload.name;
+        state.email = payload.email;
+        state.token = payload.token;
+        state.id = payload.id;
         state.error = null;
         state.isAuth = true;
       })
-      .addCase(authSignInUser.rejected, (state, action) => {
-        state.error = action.payload;
-      });
-    builder
+      .addCase(authSignInUser.rejected, (state, { payload }) => {
+        state.error = payload;
+      })
       .addCase(authSignOutUser.pending, (state) => {
         state.error = null;
       })
@@ -62,36 +60,35 @@ const authSlice = createSlice({
         state.id = null;
         state.isAuth = false;
       })
-      .addCase(authSignOutUser.rejected, (state, action) => {
-        state.error = action.payload;
-      });
-    builder
+      .addCase(authSignOutUser.rejected, (state, { payload }) => {
+        state.error = payload;
+      })
       .addCase(setAvatar.pending, (state) => {
         state.error = null;
       })
-      .addCase(setAvatar.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.name = action.payload.name;
-        state.email = action.payload.email;
-        state.token = action.payload.token;
-        state.id = action.payload.id;
-        state.avatar = action.payload.avatar;
+      .addCase(setAvatar.fulfilled, (state, { payload }) => {
+        console.log(payload);
+        state.name = payload.name;
+        state.email = payload.email;
+        state.token = payload.token;
+        state.id = payload.id;
+        state.avatar = payload.avatar;
         state.error = null;
         state.isAuth = true;
       })
-      .addCase(setAvatar.rejected, (state, action) => {
-        state.error = action.payload;
+      .addCase(setAvatar.rejected, (state, { payload }) => {
+        state.error = payload;
       });
   },
 
   reducers: {
-    refreshUser: (state, action) => {
-      console.log(action.payload);
-      state.name = action.payload.name;
-      state.email = action.payload.email;
-      state.token = action.payload.token;
-      state.id = action.payload.id;
-      state.avatar = action.payload.avatar;
+    refreshUser: (state, { payload }) => {
+      console.log(payload);
+      state.name = payload.name;
+      state.email = payload.email;
+      state.token = payload.token;
+      state.id = payload.id;
+      state.avatar = payload.avatar;
       state.error = null;
       state.isAuth = true;
     },

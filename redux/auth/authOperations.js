@@ -11,7 +11,7 @@ import {
 import { Alert } from "react-native";
 
 export const authSignInUser = createAsyncThunk(
-  "auth/logIn",
+  "auth/authSignInUser",
   async (credentials, { rejectWithValue }) => {
     console.log(credentials);
     const auth = getAuth();
@@ -37,47 +37,44 @@ export const authSignInUser = createAsyncThunk(
 );
 
 export const authSignUpUser = createAsyncThunk(
-  "auth/register",
+  "auth/authSignUpUser",
   async (credentials, { rejectWithValue }) => {
     const auth = getAuth();
     try {
       await createUserWithEmailAndPassword(
         auth,
-        // credentials.login,
+
         credentials.email,
         credentials.password
       );
       Alert.alert("You have successfully created an account!");
       await updateProfile(auth.currentUser, {
         displayName: credentials.login,
-        photoURL: credentials.avatar,
+        // photoURL: credentials.avatar,
       });
-      const updateUser = auth.currentUser;
-      console.log(
-        updateUser,
-        updateUser.displayName,
-        updateUser.email,
-        updateUser.uid
-      );
+      const { displayName, email, uid, accessToken, photoURL } =
+        auth.currentUser;
+      console.log(displayName, email, uid);
       return {
-        name: updateUser.displayName,
-        email: updateUser.email,
-        id: updateUser.uid,
-        token: updateUser.accessToken,
-        avatar: updateUser.photoURL,
+        name: displayName,
+        email: email,
+        id: uid,
+        token: accessToken,
+        avatar: photoURL,
       };
     } catch (error) {
-      if (`${error}`.includes("auth/email-already-in-use")) {
-        Alert.alert("Oops, something went wrong, please try again");
-      }
-      console.log(error);
+      //   if (`${error}`.includes("auth/email-already-in-use")) {
+      //     Alert.alert("Oops, something went wrong, please try again");
+      //   }
+      Alert.alert(error.message);
+      //   console.log(error);
       return rejectWithValue(error.message);
     }
   }
 );
 
 export const authSignOutUser = createAsyncThunk(
-  "auth/logOut",
+  "auth/authSignOutUser",
   async (_, { rejectWithValue }) => {
     try {
       const auth = getAuth();
@@ -108,3 +105,10 @@ export const setAvatar = createAsyncThunk(
     }
   }
 );
+
+// export const updateUserProfile = createAsyncThunk(
+//   "auth/updateUserProfile",
+//     async(credentials, { rejectWithValue }) = {
+
+//   }
+// );

@@ -7,12 +7,17 @@ import MapPin from "../../assets/images/mapPin.svg";
 
 import { FlatList } from "react-native-gesture-handler";
 import { color } from "react-native-reanimated";
+import { useDispatch } from "react-redux";
+import { authSignOutUser } from "../../redux/auth/authOperations";
 
 export default function DefaultScreenPosts({ navigation, route }) {
   const [posts, setPosts] = useState([]);
 
+  const dispatch = useDispatch();
+
   const logOut = () => {
-    navigation.navigate("Login");
+    dispatch(authSignOutUser());
+    // navigation.navigate("Login");
   };
 
   useEffect(() => {
