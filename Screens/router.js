@@ -25,6 +25,11 @@ export default function useRoute(isAuth) {
             headerShown: false,
           }}
         />
+      </MainStack.Navigator>
+    );
+  } else {
+    return (
+      <MainStack.Navigator>
         <MainStack.Screen
           name="Home"
           component={Home}
@@ -32,13 +37,6 @@ export default function useRoute(isAuth) {
             headerShown: false,
           }}
         />
-        {/* <MainStack.Screen
-          name="Map"
-          component={MapScreen}
-          options={{
-            headerShown: false,
-          }}
-        /> */}
       </MainStack.Navigator>
     );
   }

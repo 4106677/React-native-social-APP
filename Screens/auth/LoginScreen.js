@@ -14,34 +14,40 @@ import {
   ImageBackground,
   onChangeText,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import {
+  authSignInUser,
+  authSignUpUser,
+} from "../../redux/auth/authOperations";
 
 export default function LoginScreen({ navigation }) {
-  const [email, setemail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [focus, setFocus] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
 
-  const emailHandler = (text) => setemail(text);
+  const dispatch = useDispatch();
+
+  const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
 
   const onLogin = () => {
-    // Alert.alert("Credentials", `${email} + ${password}`);
+    if (email === "" || password === "") {
+      return Alert.alert("Так неможна, потрібні данні користувача");
+    }
     Keyboard.dismiss();
     setIsShowKeyboard(false);
-    navigation.navigate("Home");
-    setemail("");
+    // navigation.navigate("Home");
+    dispatch(authSignInUser({ email, password }));
+    setEmail("");
     setPassword("");
-    console.log(email, password);
+    // console.log(email, password);
   };
 
   const toggleHidePassword = () => {
     setHidePassword(!hidePassword);
   };
-
-  // const [inputBacklight, setInputBacklight] = useState({
-  //   borderColor: "#E8E8E8",
-  // });
 
   const onFocus = () => {
     setIsShowKeyboard(true);

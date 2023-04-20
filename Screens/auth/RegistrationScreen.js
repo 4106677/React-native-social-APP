@@ -14,6 +14,9 @@ import {
   onChangeText,
 } from "react-native";
 
+import { authSignUpUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+
 export default function RegistrationScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,18 +25,19 @@ export default function RegistrationScreen({ navigation }) {
   const [focus, setFocus] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
 
+  const dispatch = useDispatch();
+
   const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
   const loginHandler = (text) => setLogin(text);
 
-  const onLogin = () => {
-    Alert.alert(`${login}`, `${email} + ${password}`);
+  const onSubmit = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
+    dispatch(authSignUpUser({ email, login, password }));
     setEmail("");
     setPassword("");
     setLogin("");
-    console.log(email, password, login);
   };
 
   const toggleHidePassword = () => {
@@ -119,7 +123,7 @@ export default function RegistrationScreen({ navigation }) {
               </View>
               <TouchableOpacity
                 style={styles.button}
-                onPress={onLogin}
+                onPress={onSubmit}
                 activeOpacity={0.8}
               >
                 <Text style={styles.btnText}>Зареєструватись</Text>
