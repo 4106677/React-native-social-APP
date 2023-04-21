@@ -7,7 +7,7 @@ import ShapeRed from "../../assets/images/shape-red.svg";
 import MapPin from "../../assets/images/mapPin.svg";
 
 import { FlatList } from "react-native-gesture-handler";
-import { color } from "react-native-reanimated";
+
 import { useDispatch } from "react-redux";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 
@@ -20,66 +20,72 @@ import {
   doc,
   query,
 } from "firebase/firestore";
+import postsSelectors from "../../redux/posts/postsSelectors";
+import authSelectors from "../../redux/auth/authSelectors";
+import postOperation from "../../redux/posts/postsOperations";
 
 const db = getFirestore(app);
 
 export default function DefaultScreenPosts({ navigation, route }) {
-  const [posts, setPosts] = useState([]);
-  const [commentsCount, setCommentsCount] = useState({});
-  console.log(commentsCount);
-  console.log(posts);
-
+  const posts = useSelector(postsSelectors.getPosts);
+  const user = useSelector(authSelectors.getUser);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(postOperation.getAllPosts());
+  }, []);
+
+  // const [posts, setPosts] = useState([]);
+  // const [commentsCount, setCommentsCount] = useState({});
+  // const { userName, userEmail } = useSelector((state) => state.auth);
+
+  // console.log(posts);
   const logOut = () => {
     dispatch(authSignOutUser());
   };
 
-  const { userName, userEmail } = useSelector((state) => state.auth);
+  // const getAllPost = async () => {
+  //   try {
+  //     onSnapshot(collection(db, "posts"), (data) => {
+  //       setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //     });
+  //   } catch (error) {
+  //     console.log(error.massage);
+  //     Alert.alert("Try again");
+  //   }
+  // };
 
-  const getAllPost = async () => {
-    try {
-      await onSnapshot(collection(db, "posts"), (snapshots) => {
-        setPosts(snapshots.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      });
-    } catch (error) {
-      console.log(error.massage);
-      Alert.alert("Try again");
-    }
-  };
+  // useEffect(() => {
+  //   if (route.params?.commentsCount) {
+  //     setCommentsCount((prev) => ({
+  //       ...prev,
+  //       [route.params.postId]: route.params.commentsCount,
+  //     }));
+  //   }
+  // }, [route]);
 
-  useEffect(() => {
-    getAllPost();
-    posts.forEach((post) => {
-      getCommentsCount(post.id);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getAllPost();
+  //   posts.forEach((post) => {
+  //     getCommentsCount(post.id);
+  //     console.log(post.id);
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    if (route.params?.commentsCount) {
-      setCommentsCount((prev) => ({
-        ...prev,
-        [route.params.postId]: route.params.commentsCount,
-      }));
-    }
-  }, [route.params]);
-
-  const getCommentsCount = async (postId) => {
-    try {
-      const commentsRef = collection(db, `posts/${postId}/comments`);
-      const queryRef = query(commentsRef);
-      const unsubscribe = onSnapshot(queryRef, (querySnapshot) => {
-        const commentsCount = querySnapshot.docs.length;
-        setCommentsCount((prev) => ({ ...prev, [postId]: commentsCount }));
-      });
-      return () => unsubscribe();
-    } catch (error) {
-      console.log(error);
-      setCommentsCount((prev) => ({ ...prev, [postId]: 0 }));
-    }
-  };
-
-  console.log(posts);
+  // const getCommentsCount = async (postId) => {
+  //   try {
+  //     const commentsRef = collection(db, `posts/${postId}/comments`);
+  //     const queryRef = query(commentsRef);
+  //     const unsubscribe = onSnapshot(queryRef, (querySnapshot) => {
+  //       const commentsCount = querySnapshot.docs.length;
+  //       setCommentsCount((prev) => ({ ...prev, [postId]: commentsCount }));
+  //     });
+  //     return () => unsubscribe();
+  //   } catch (error) {
+  //     console.log(error);
+  //     setCommentsCount((prev) => ({ ...prev, [postId]: 0 }));
+  //   }
+  // };
 
   return (
     <View style={styles.wrapper}>
@@ -104,9 +110,9 @@ export default function DefaultScreenPosts({ navigation, route }) {
                 color: "#212121",
               }}
             >
-              {userName}
+              {user.userName}
             </Text>
-            <Text style={styles.text}>{userEmail}</Text>
+            <Text style={styles.text}>{user.userEmail}</Text>
           </View>
         </View>
         <View style={styles.postsContainer}>
@@ -118,7 +124,8 @@ export default function DefaultScreenPosts({ navigation, route }) {
                 <Image source={{ uri: item.photo }} style={styles.postImage} />
                 <Text style={styles.itemName}>{item.comment}</Text>
                 <View style={styles.itemDetails}>
-                  {commentsCount[item.id] >= 1 ? <ShapeRed /> : <Shape />}
+                  {/* <Shape /> */}
+                  {item.countComments !== 0 ? <ShapeRed /> : <Shape />}
                   <Text
                     style={{ color: "#BDBDBD", marginLeft: 9 }}
                     onPress={() =>
@@ -128,7 +135,7 @@ export default function DefaultScreenPosts({ navigation, route }) {
                       })
                     }
                   >
-                    {commentsCount[item.id] || 0}
+                    {item.countComments || 0}
                   </Text>
                   <MapPin style={{ marginLeft: "auto", marginRight: 4 }} />
                   <Text
@@ -201,8 +208,9 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   postsContainer: {
-    // height: "100%",
-    marginBottom: 175,
+    height: 540,
+    // marginBottom: 175,
+    // flexDirection: "row-reverse",
   },
   postImage: {
     width: "100%",

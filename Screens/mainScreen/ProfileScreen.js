@@ -12,7 +12,7 @@ import Out from "../../assets/images/log-out.svg";
 import { useDispatch } from "react-redux";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 import { useSelector } from "react-redux";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+
 import MapPin from "../../assets/images/mapPin.svg";
 import Shape from "../../assets/images/shape.svg";
 import ShapeRed from "../../assets/images/shape-red.svg";

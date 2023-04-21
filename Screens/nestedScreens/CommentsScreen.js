@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import app from "../../firebase/config";
 import {
@@ -27,6 +27,7 @@ import {
 } from "firebase/firestore";
 
 import { AntDesign } from "@expo/vector-icons";
+import postOperation from "../../redux/posts/postsOperations";
 
 const db = getFirestore(app);
 
@@ -39,6 +40,7 @@ const CommentsScreen = ({ route, navigation }) => {
   const [focus, setFocus] = useState(false);
 
   const { userName } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getAllPosts();
@@ -46,7 +48,7 @@ const CommentsScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     navigation.setParams({ commentsCount: commentsCount });
-  }, [commentsCount]);
+  }, []);
 
   const createPost = async () => {
     if (comment.trim() === "") {
@@ -60,6 +62,7 @@ const CommentsScreen = ({ route, navigation }) => {
       userName,
       postDate: new Date(),
     });
+
     setComment("");
   };
 

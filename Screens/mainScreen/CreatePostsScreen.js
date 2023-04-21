@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import Left from "../../assets/images/arrow-left.svg";
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
@@ -30,6 +30,7 @@ const cloudDB = getFirestore(app);
 import DropPhoto from "../../assets/images/dropPhoto.svg";
 import MapPin from "../../assets/images/mapPin.svg";
 import Trash from "../../assets/images/trash.svg";
+import postOperation from "../../redux/posts/postsOperations";
 
 export default function CreatePostsScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -51,6 +52,8 @@ export default function CreatePostsScreen({ navigation }) {
       setHasPermission(status === "granted");
     })();
   }, []);
+
+  const dispatch = useDispatch();
 
   const nameHandler = (text) => setComment(text);
   const locationHandler = (text) => setLocation(text);
@@ -112,6 +115,7 @@ export default function CreatePostsScreen({ navigation }) {
         userId,
         userName,
       });
+      dispatch(postOperation.getAllPosts());
     } catch (error) {
       console.log(error.massage);
     }
@@ -206,13 +210,13 @@ export default function CreatePostsScreen({ navigation }) {
                 </View>
               </View>
               <TouchableOpacity
-                style={name.length < 1 ? styles.buttonOff : styles.button}
+                style={comment.length < 1 ? styles.buttonOff : styles.button}
                 onPress={sendPhoto}
                 activeOpacity={0.8}
               >
                 <Text
                   style={
-                    name.length < 1
+                    comment.length < 1
                       ? { ...styles.btnText, color: "#BDBDBD" }
                       : styles.btnText
                   }
