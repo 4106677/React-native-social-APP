@@ -21,5 +21,7 @@ Gesture-handler
 ```
 
 <p align="center">
-  <img src="./assets//demo.gif" width="350" title="hover text">
+  <img src="./assets/demo.gif" width="350" title="hover text">
+<p align="center">
+  <img src="./assets/expo.png" width="350" title="hover text">
 </p>
