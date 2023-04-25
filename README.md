@@ -22,5 +22,4 @@ Gesture-handler
 
 <p align="center" flexDirection="row" justifyContent="center">
   <img src="./assets/demo.gif" width="350" title="hover text">
-  <img src="./assets/expo.png" width="350" title="hover text">
 </p>
