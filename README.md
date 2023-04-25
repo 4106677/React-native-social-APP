@@ -4,7 +4,12 @@ React Native social application with the ability to upload photos with a link to
 geolocation. Filtering of posts for each user, the possibility of commenting
 with a count of the number of comments.
 
-[Expo Demo APP](https://expo.dev/@4106677/goit-reactnative?serviceType=classic&distribution=expo-go)
+[Expo Demo APP](https://expo.dev/@4106677/goit-reactnative?serviceType=classic&distribution=expo-go) 
+
+Or, open this link on your device:
+```bash
+exp://exp.host/@4106677/goit-reactnative?release-channel=default
+```
 
 ## Tech Stack
 
