@@ -20,6 +20,6 @@ Gesture-handler
 "web": "expo start --web",
 ```
 
-<p align="center" flexDirection="row" justifyContent="center">
+<p align="center" flexDirection="row">
   <img src="./assets/demo.gif" width="350" title="hover text">
 </p>
